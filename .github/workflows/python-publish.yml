@@ -53,26 +53,26 @@ jobs:
         echo $PWD
         ls -la 
         NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
-        git tag "$NEW_VERSION"
-        git push && git push --tags        
 
     - name: Build package
       run: python -m build
+
+    - name: Publish release on github
+      run: |
+        git tag "$NEW_VERSION"
+        git push && git push --tags
+        CHANGELOG="$CHANGELOG
+        
+        Full Changelog: [$LAST_TAG...$TAG](https://github.com/ydb-platform/ydb-go-sdk/compare/$LAST_TAG...$TAG)"
+        if [ "$RELEASE_CANDIDATE" = true ]
+        then
+          gh release create -d $TAG -t "$TAG" --notes "$CHANGELOG"
+        else
+          gh release create $TAG -t "$TAG" --notes "$CHANGELOG"
+        fi;
 
 #    - name: Publish package
 #      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
 #      with:
 #        user: __token__
 #        password: ${{ secrets.PYPI_API_TOKEN }}
-
-    - name: Create release
-      run: |      
-          CHANGELOG="$CHANGELOG
-          
-          Full Changelog: [$LAST_TAG...$TAG](https://github.com/ydb-platform/ydb-go-sdk/compare/$LAST_TAG...$TAG)"
-          if [ "$RELEASE_CANDIDATE" = true ]
-          then
-            gh release create -d $TAG -t "$TAG" --notes "$CHANGELOG"
-          else
-            gh release create $TAG -t "$TAG" --notes "$CHANGELOG"
-          fi;
