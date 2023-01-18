@@ -62,13 +62,7 @@ jobs:
     - name: Increment version
       id: increment-version
       run: |
-        if [ "$WITH_BETA" == "true" ];
-        then
-          BETA_PARAM="--beta"
-        else
-          BETA_PARAM=""
-        fi;
-        NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE $BETA_PARAM)
+        NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --beta=$WITH_BETA)
         echo new version: $NEW_VERSION
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
         echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
