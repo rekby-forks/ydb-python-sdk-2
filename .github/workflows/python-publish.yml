@@ -31,6 +31,7 @@ jobs:
       WITH_BETA: ${{ github.event.inputs.beta }}
       GITHUB_TOKEN: ${{ secrets.YDB_PLATFORM_BOT_TOKEN_REPO }}
       CHANGELOG_FILE: CHANGELOG.md
+      SETUP_PY_PATH: setup.py
 
     runs-on: ubuntu-latest
 
@@ -69,6 +70,9 @@ jobs:
         echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
         echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
+        git add $SETUP_PY_PATH
+        git add $CHANGELOG_FILE
+
     - name: Build package
       run: python -m build
 
@@ -83,6 +87,10 @@ jobs:
           exit 1;
         fi;
         
+        git config --global user.email "robot@umbrella";
+        git config --global user.name "robot";
+        git commit -m "Release: $NEW_VERSION";
+
         git tag "$TAG"
         git push && git push --tags
         
