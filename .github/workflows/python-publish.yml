@@ -51,7 +51,7 @@ jobs:
       run: |
         echo $PWD
         ls
-        NEW_VERSION=$(python ./scripts/increment-version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
+        NEW_VERSION=$(python ./.github/scripts/increment-version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         git tag "$NEW_VERSION"
         git push && git push --tags        
 
