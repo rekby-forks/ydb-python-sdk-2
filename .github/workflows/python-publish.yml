@@ -87,7 +87,7 @@ jobs:
         # pre-incremented version not used for consistent changelog with release notes
         # for example changelog may be rewrited when switch from beta to release
         # and remove internal beta changes
-        LAST_TAG=(cat CHANGELOG.md | grep '^## .* ##$' | head -n 2 | tail -n 1 | cut -d ' ' -f 2)
+        LAST_TAG=$(cat $CHANGELOG_FILE | grep '^## .* ##$' | head -n 2 | tail -n 1 | cut -d ' ' -f 2)
         
         git config --global user.email "robot@umbrella";
         git config --global user.name "robot";
