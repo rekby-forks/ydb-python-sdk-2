@@ -1,3 +1,5 @@
+* add changelog to summary
+
 ## 2.18.0a1 ##
 * new test
 

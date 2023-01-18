@@ -57,6 +57,7 @@ jobs:
         echo "CHANGELOG<<CHANGELOGEOF_MARKER" >> $GITHUB_ENV
         echo "$CHANGELOG" >> $GITHUB_ENV
         echo "CHANGELOGEOF_MARKER" >> $GITHUB_ENV
+        echo "# Changelog\n$CHANGELOG" >> $GITHUB_STEP_SUMMARY
         
 
     - name: Increment version
