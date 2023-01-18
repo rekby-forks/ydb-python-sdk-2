@@ -1,5 +1,4 @@
-## 2.13.0a4 ##
-* test
+* test extract old version
 
 ## 2.12.1 ##
 * Supported `TYPE_UNSPECIFIED` item type to scheme ls
