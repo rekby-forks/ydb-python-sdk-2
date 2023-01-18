@@ -133,12 +133,13 @@ def main():
         help="increment version type: patch or minor",
         choices=["minor", "patch"],
     )
-    parser.add_argument("--with-beta", default=True, help="is beta version", type=bool)
+    parser.add_argument("--beta", action=argparse.BooleanOptionalAction, help="is beta version")
     parser.add_argument("--changelog-path", default=DEFAULT_CHANGELOG_PATH, help="path to changelog", type=str)
+    parser.add_argument("--setup-py-path", default=SETUP_PY_PATH)
 
     args = parser.parse_args()
 
-    new_version = increment_version_at_setup_py(SETUP_PY_PATH, args.inc_type, args.with_beta)
+    new_version = increment_version_at_setup_py(args.setup_py_path, args.inc_type, args.beta)
     add_changelog_version(args.changelog_path, new_version)
     print(new_version)
 
