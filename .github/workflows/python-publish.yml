@@ -52,7 +52,7 @@ jobs:
     - name: read changelog
       id: read-changelog
       run: |
-        CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')
+        CHANGELOG="$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')"
         echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
         echo "Changelog:\n $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
         
