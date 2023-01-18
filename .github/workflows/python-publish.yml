@@ -52,7 +52,7 @@ jobs:
     - name: read changelog
       id: read-changelog
       run: |
-        CHANGELOG="$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')"
+        CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')
         echo "CHANGELOG<<CHANGELOGEOF_MARKER" >> $GITHUB_ENV
         echo "$CHANGELOG" >> $GITHUB_ENV
         echo "CHANGELOGEOF_MARKER" >> $GITHUB_ENV
@@ -76,7 +76,7 @@ jobs:
         TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
         LAST_TAG="${{ steps.increment-version.outputs.OLD_VERSION }}"
         
-        if [[ -z "$CHANGELOG" -a  "$WITH_BETA" != true ]]
+        if [[ -z "$CHANGELOG" ]] && [[  "$WITH_BETA" = "false" ]]
         then
           echo "CHANGELOG empty"
           exit 1;
