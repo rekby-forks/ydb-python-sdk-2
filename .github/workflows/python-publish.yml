@@ -49,7 +49,7 @@ jobs:
 
     - name: Increment version
       run: |
-        NEW_VERSION=$(pyton ./scripts/increment-version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
+        NEW_VERSION=$(python ./scripts/increment-version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         git tag "$NEW_VERSION"
         git push && git push --tags        
 
