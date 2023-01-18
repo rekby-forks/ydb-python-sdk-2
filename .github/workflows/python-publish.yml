@@ -49,16 +49,21 @@ jobs:
         pip install build
 
     - name: Increment version
+      id: increment-version
       run: |
         echo $PWD
         ls -la 
         NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
+        echo new version: $NEW_VERSION
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
     - name: Build package
       run: python -m build
 
     - name: Publish release on github
       run: |
+        NEW_VERSION=${{ steps.increment-version.outputs.NEW_VERSION }}
         git tag "$NEW_VERSION"
         git push && git push --tags
         CHANGELOG="$CHANGELOG
