@@ -40,7 +40,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.x'
+        python-version: '3.8'
 
     - name: Install dependencies
       run: |
@@ -49,6 +49,8 @@ jobs:
 
     - name: Increment version
       run: |
+        echo $PWD
+        ls
         NEW_VERSION=$(python ./scripts/increment-version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         git tag "$NEW_VERSION"
         git push && git push --tags        
