@@ -53,8 +53,9 @@ jobs:
       id: read-changelog
       run: |
         CHANGELOG="$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')"
-        echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
-        echo "Changelog:\n $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
+        echo "CHANGELOG<<CHANGELOGEOF_MARKER" >> $GITHUB_ENV
+        echo "$CHANGELOG" >> $GITHUB_ENV
+        echo "CHANGELOGEOF_MARKER" >> $GITHUB_ENV
         
 
     - name: Increment version
@@ -65,6 +66,7 @@ jobs:
         echo new version: $NEW_VERSION
         echo "NEW_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
         echo "OLD_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
     - name: Build package
       run: python -m build
@@ -73,7 +75,6 @@ jobs:
       run: |
         TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
         LAST_TAG="${{ steps.increment-version.outputs.OLD_VERSION }}"
-        CHANGELOG="${{ steps.read-changelog.outputs.CHANGELOG }}"
         
         if [[ -z "$CHANGELOG" -a  "$WITH_BETA" != true ]]
         then
