@@ -30,6 +30,7 @@ jobs:
       VERSION_CHANGE: ${{ github.event.inputs.version-change }}
       WITH_BETA: ${{ github.event.inputs.beta }}
       GITHUB_TOKEN: ${{ secrets.YDB_PLATFORM_BOT_TOKEN_REPO }}
+      CHANGELOG_FILE: CHANGELOG.md
 
     runs-on: ubuntu-latest
 
@@ -48,17 +49,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install build
 
+    - name: read changelog
+      id: read-changelog
+      run: |
+        CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')
+        echo "CHANGELOG=$CHANGELOG" >> $GITHUB_OUTPUT
+        echo "Changelog:\n $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
+        
+
     - name: Increment version
       id: increment-version
       run: |
-        echo $PWD
-        ls -la 
         OLD_VERSION=$(python3 ./.github/scripts/read_version.py)
         NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         echo new version: $NEW_VERSION
         echo "NEW_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
         echo "OLD_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
     - name: Build package
       run: python -m build
@@ -67,8 +73,17 @@ jobs:
       run: |
         TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
         LAST_TAG="${{ steps.increment-version.outputs.OLD_VERSION }}"
+        CHANGELOG="${{ steps.read-changelog.outputs.CHANGELOG }}"
+        
+        if [[ -z "$CHANGELOG" -a  "$WITH_BETA" != true ]]
+        then
+          echo "CHANGELOG empty"
+          exit 1;
+        fi;
+        
         git tag "$TAG"
         git push && git push --tags
+        
         CHANGELOG="$CHANGELOG
         
         Full Changelog: [$LAST_TAG...$TAG](https://github.com/ydb-platform/ydb-go-sdk/compare/$LAST_TAG...$TAG)"

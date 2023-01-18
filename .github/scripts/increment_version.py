@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from packaging.version import Version
 
 SETUP_PY_PATH = "setup.py"
-CHANGELOG_PATH = "CHANGELOG.md"
+DEFAULT_CHANGELOG_PATH = "CHANGELOG.md"
 MARKER = "# AUTOVERSION"
 
 
@@ -134,11 +134,12 @@ def main():
         choices=["minor", "patch"],
     )
     parser.add_argument("--with-beta", default=True, help="is beta version", type=bool)
+    parser.add_argument("--changelog-path", default=DEFAULT_CHANGELOG_PATH, help="path to changelog", type=str)
 
     args = parser.parse_args()
 
     new_version = increment_version_at_setup_py(SETUP_PY_PATH, args.inc_type, args.with_beta)
-    add_changelog_version(CHANGELOG_PATH, new_version)
+    add_changelog_version(args.changelog_path, new_version)
     print(new_version)
 
 
