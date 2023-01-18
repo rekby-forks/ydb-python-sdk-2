@@ -53,6 +53,7 @@ jobs:
       id: read-changelog
       run: |
         CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')
+        CHANGELOG=test
         echo "CHANGELOG<<CHANGELOGEOF_MARKER" >> $GITHUB_ENV
         echo "$CHANGELOG" >> $GITHUB_ENV
         echo "CHANGELOGEOF_MARKER" >> $GITHUB_ENV
