@@ -65,9 +65,9 @@ jobs:
 
     - name: Publish release on github
       run: |
-        TAG=${{ steps.increment-version.outputs.NEW_VERSION }}
-        LAST_TAG=${{ steps.increment-version.outputs.OLD_VERSION }}
-        git tag "$NEW_VERSION"
+        TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
+        LAST_TAG="${{ steps.increment-version.outputs.OLD_VERSION }}"
+        git tag "$TAG"
         git push && git push --tags
         CHANGELOG="$CHANGELOG
         
