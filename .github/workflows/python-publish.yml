@@ -53,8 +53,7 @@ jobs:
     - name: read changelog
       id: read-changelog
       run: |
-        CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## v.*$/,$d')
-        CHANGELOG=test
+        CHANGELOG=$(cat $CHANGELOG_FILE | sed -e '/^## .*$/,$d')
         echo "CHANGELOG<<CHANGELOGEOF_MARKER" >> $GITHUB_ENV
         echo "$CHANGELOG" >> $GITHUB_ENV
         echo "CHANGELOGEOF_MARKER" >> $GITHUB_ENV
@@ -63,11 +62,9 @@ jobs:
     - name: Increment version
       id: increment-version
       run: |
-        OLD_VERSION=$(python3 ./.github/scripts/read_version.py)
         NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         echo new version: $NEW_VERSION
         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
         echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
         git add $SETUP_PY_PATH
@@ -78,14 +75,19 @@ jobs:
 
     - name: Publish release on github
       run: |
-        TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
-        LAST_TAG="${{ steps.increment-version.outputs.OLD_VERSION }}"
-        
-        if [[ -z "$CHANGELOG" ]] && [[  "$WITH_BETA" = "false" ]]
+        if [[ -z "$CHANGELOG" ]]
         then
           echo "CHANGELOG empty"
           exit 1;
         fi;
+        
+        TAG="${{ steps.increment-version.outputs.NEW_VERSION }}"
+        
+        # Get previous version from changelog
+        # pre-incremented version not used for consistent changelog with release notes
+        # for example changelog may be rewrited when switch from beta to release
+        # and remove internal beta changes
+        LAST_TAG=(cat CHANGELOG.md | grep '^## .* ##$' | head -n 2 | tail -n 1 | cut -d ' ' -f 2)
         
         git config --global user.email "robot@umbrella";
         git config --global user.name "robot";
