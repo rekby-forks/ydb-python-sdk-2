@@ -64,8 +64,8 @@ jobs:
         OLD_VERSION=$(python3 ./.github/scripts/read_version.py)
         NEW_VERSION=$(python3 ./.github/scripts/increment_version.py --inc-type=$VERSION_CHANGE --with-beta=$WITH_BETA)
         echo new version: $NEW_VERSION
-        echo "NEW_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
-        echo "OLD_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_OUTPUT
         echo "New version: $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
     - name: Build package
